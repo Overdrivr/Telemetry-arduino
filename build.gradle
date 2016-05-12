@@ -1,0 +1,90 @@
+task arduino_copyCore(type: Copy) {
+  def d = new File('dist/arduino/')
+  d.mkdirs()
+
+  from '/src/'
+  into 'dist/arduino/core/'
+  rename { String fileName ->
+        fileName.replace('.c', '.cpp')
+    }
+  include '**/**.c','**/**.h'
+}
+
+task arduino_copyPlatform(type: Copy) {
+  from '/platforms/arduino/'
+  into 'dist/arduino/'
+  rename { String fileName ->
+        fileName.replace('Telemetry.hpp', 'Telemetry.h')
+    }
+  include '**.c','**.h','**.cpp','**.hpp'
+}
+
+task arduino_distribute() {
+  dependsOn << arduino_copyCore
+  dependsOn << arduino_copyPlatform
+}
+
+//TODO : add version to the zip
+task arduino_pack(type: Zip){
+  dependsOn << arduino_distribute
+  from './dist/arduino/'
+  into './Telemetry/'
+  archiveName 'Telemetry-arduino.zip'
+}
+
+model {
+  components {
+
+    hardwareSerialMock(NativeLibrarySpec) {
+      sources {
+        cpp {
+          source {
+             srcDirs "mocks/cpp/hardwareserial/"
+             include "HardwareSerial.cpp"
+          }
+          exportedHeaders {
+            srcDirs "mocks/cpp/hardwareserial/"
+            include "HardwareSerial.h"
+          }
+        }
+      }
+    }
+
+    arduinoDistribution(NativeLibrarySpec) {
+      binaries.all {
+        lib library: "hardwareSerialMock"
+      }
+      sources {
+        cpp {
+          source {
+             srcDirs "dist/arduino/"
+             include "**/*.c", "**/*.cpp"
+          }
+          exportedHeaders {
+            srcDirs "dist/arduino/"
+            include "**/*.h", "**/*.hpp"
+          }
+        }
+      }
+    }
+
+    arduinoTest(NativeExecutableSpec) {
+      binaries.all {
+        lib library: "hardwareSerialMock"
+        lib library: "arduinoDistribution"
+      }
+      sources {
+        cpp {
+          source {
+             srcDirs "integration_tests/cpp/mbed/"
+             include "**/*.cpp"
+          }
+          exportedHeaders {
+            srcDirs "integration_tests/cpp/mbed/"
+            include "**/*.hpp"
+          }
+        }
+      }
+    }
+  }
+}
