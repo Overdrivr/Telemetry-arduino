@@ -1,9 +1,9 @@
 # Telemetry-arduino
 
-Drag-n-drop C++ Arduino wrapper of the `Telemetry` library.
+Drag-n-drop C++ Arduino wrapper of the [`Telemetry`](https://github.com/Overdrivr/Telemetry) library.
 
-`Telemetry-arduino` lets you exchange data between an Arduino board and a computer,
- through a serial or bluetooth connection, using a convenient interface.
+`Telemetry` lets you exchange data between an Arduino board and a computer,
+ often through a serial or bluetooth connection, using a convenient interface.
 
 Any exchanged data carries a label, called *topic*. Topics are used to identify data,
 and act as a named communication channel.
@@ -12,7 +12,11 @@ and act as a named communication channel.
 
 ```cpp
 Telemetry TM;
-int32_t i = 123;
+int32_t i;
+
+void setup() {
+   i = 0;
+}
 
 void loop() {
   // Send counter value under topic `foo`
@@ -28,7 +32,9 @@ When new data is received under the topic, the attached variable is updated.
 Telemetry TM;
 float thr;
 
-TM.attach_f32_to("throttle", &thr);
+void setup() {
+  TM.attach_f32_to("throttle", &thr);
+}
 
 void loop() {
   // thr is updated here, if new data is received under `throttle`
@@ -61,6 +67,7 @@ Opening a live plot is as simple as
 
 # Central documentation
 
+* TODO : API Reference
 * [Overview of the library](https://github.com/Overdrivr/Telemetry/wiki/Overview)
 * [Protocol description](https://github.com/Overdrivr/Telemetry/wiki/Protocol-description)
 * [A non-exhaustive list of all the awesome features](https://github.com/Overdrivr/Telemetry/wiki/Awesome-features-overview)
