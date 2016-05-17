@@ -1,90 +1,93 @@
-task arduino_copyCore(type: Copy) {
-  def d = new File('dist/arduino/')
-  d.mkdirs()
+plugins {
+  id "org.ajoberstar.grgit" version "1.5.0-milestone.2"
+}
 
-  from '/src/'
-  into 'dist/arduino/core/'
-  rename { String fileName ->
-        fileName.replace('.c', '.cpp')
-    }
+import org.ajoberstar.grgit.*
+
+task cloneCoreRepo << {
+  delete "${rootDir}/build/repo"
+  delete "${rootDir}/src/core"
+  Grgit.clone(dir: file('build/repo'), uri: 'https://github.com/Overdrivr/Telemetry')
+}
+
+task prepare(type: Copy) {
+  dependsOn << cloneCoreRepo
+  from './build/repo/src/telemetry/c', './build/repo/src/telemetry/headers/'
+  into './src/core/'
   include '**/**.c','**/**.h'
 }
 
-task arduino_copyPlatform(type: Copy) {
-  from '/platforms/arduino/'
-  into 'dist/arduino/'
-  rename { String fileName ->
-        fileName.replace('Telemetry.hpp', 'Telemetry.h')
-    }
-  include '**.c','**.h','**.cpp','**.hpp'
-}
-
-task arduino_distribute() {
-  dependsOn << arduino_copyCore
-  dependsOn << arduino_copyPlatform
-}
-
 //TODO : add version to the zip
-task arduino_pack(type: Zip){
-  dependsOn << arduino_distribute
+task pack(type: Zip){
   from './dist/arduino/'
   into './Telemetry/'
   archiveName 'Telemetry-arduino.zip'
 }
 
-model {
-  components {
+apply plugin: 'cpp'
 
+model {
+  buildTypes {
+    debug
+    release
+  }
+
+  toolChains {
+    gcc(Gcc) { }
+  }
+
+  components {
     hardwareSerialMock(NativeLibrarySpec) {
       sources {
         cpp {
           source {
-             srcDirs "mocks/cpp/hardwareserial/"
+             srcDirs "test/hardwareserial/"
              include "HardwareSerial.cpp"
           }
           exportedHeaders {
-            srcDirs "mocks/cpp/hardwareserial/"
+            srcDirs "test/hardwareserial/"
             include "HardwareSerial.h"
           }
         }
       }
     }
 
-    arduinoDistribution(NativeLibrarySpec) {
+    telemetry(NativeLibrarySpec) {
       binaries.all {
         lib library: "hardwareSerialMock"
       }
       sources {
         cpp {
           source {
-             srcDirs "dist/arduino/"
+             srcDirs "src/"
              include "**/*.c", "**/*.cpp"
           }
           exportedHeaders {
-            srcDirs "dist/arduino/"
+            srcDirs "src/"
             include "**/*.h", "**/*.hpp"
           }
         }
       }
     }
 
-    arduinoTest(NativeExecutableSpec) {
+    test(NativeExecutableSpec) {
       binaries.all {
         lib library: "hardwareSerialMock"
-        lib library: "arduinoDistribution"
+        lib library: "telemetry"
       }
       sources {
         cpp {
           source {
-             srcDirs "integration_tests/cpp/mbed/"
+             srcDirs "test/src/"
              include "**/*.cpp"
           }
           exportedHeaders {
-            srcDirs "integration_tests/cpp/mbed/"
+            srcDirs "test/src/"
             include "**/*.hpp"
           }
         }
       }
     }
+
   }
 }
