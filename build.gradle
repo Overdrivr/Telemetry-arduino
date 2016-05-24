@@ -10,18 +10,25 @@ task cloneCoreRepo << {
   Grgit.clone(dir: file('build/repo'), uri: 'https://github.com/Overdrivr/Telemetry')
 }
 
+task copyTestFile(type: Copy) {
+  from './test/data/'
+  into './build/install/test/debug/'
+  include '*.csv'
+}
+
 task prepare(type: Copy) {
   dependsOn << cloneCoreRepo
+  dependsOn << copyTestFile
   from './build/repo/src/telemetry/c', './build/repo/src/telemetry/headers/'
   into './src/core/'
   include '**/**.c','**/**.h'
 }
 
-//TODO : add version to the zip
-task pack(type: Zip){
-  from './dist/arduino/'
+task distribute(type: Zip){
+  dependsOn cloneCoreRepo
+  from './src/'
   into './Telemetry/'
-  archiveName 'Telemetry-arduino.zip'
+  archiveName 'dist/Telemetry-arduino.zip'
 }
 
 apply plugin: 'cpp'
@@ -82,8 +89,8 @@ model {
              include "**/*.cpp"
           }
           exportedHeaders {
-            srcDirs "test/src/"
-            include "**/*.hpp"
+            srcDirs "test/src/", "test/data/"
+            include "**/*.hpp", "**/*.csv"
           }
         }
       }
