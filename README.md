@@ -11,16 +11,17 @@ and act as a named communication channel.
 * Sending data from the Arduino is called *publishing*.
 
 ```cpp
-Telemetry TM;
+#include <Telemetry.hpp>
 int32_t i;
 
 void setup() {
-   i = 0;
+  Serial.begin(9600); // Do not forget to initialize serial
+  i = 0;
 }
 
 void loop() {
   // Send counter value under topic `foo`
-  TM.pub_i32("foo", i);   i++;
+  Telemetry.pub_i32("foo", i);   i++;
 }
 
 ```
@@ -29,16 +30,17 @@ void loop() {
 When new data is received under the topic, the attached variable is updated.
 
 ```cpp
-Telemetry TM;
+#include <Telemetry.hpp>
 float thr;
 
 void setup() {
-  TM.attach_f32_to("throttle", &thr);
+  Serial.begin(9600);
+  Telemetry.attach_f32_to("throttle", &thr);
 }
 
 void loop() {
   // thr is updated here, if new data is received under `throttle`
-  TM.update();
+  Telemetry.update();
 }
 ```
 
