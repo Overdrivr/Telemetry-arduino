@@ -25,7 +25,7 @@ task prepare(type: Copy) {
 }
 
 task distribute(type: Zip){
-  dependsOn cloneCoreRepo
+  dependsOn << prepare
   from './src/'
   into './Telemetry/'
   archiveName 'dist/Telemetry-arduino.zip'
