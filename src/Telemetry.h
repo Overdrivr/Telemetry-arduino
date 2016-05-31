@@ -1,5 +1,5 @@
-#ifndef TELEMETRY_HPP_
-#define TELEMETRY_HPP_
+#ifndef TELEMETRY_ARDUINO_H_
+#define TELEMETRY_ARDUINO_H_
 
 #include "core/telemetry_utils.h"
 

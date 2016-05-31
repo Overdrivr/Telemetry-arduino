@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
-#include "Telemetry.hpp"
+#include "Telemetry.h"
 
 #include <fstream>
 #include <sstream>
@@ -32,7 +32,7 @@ TEST_CASE( "Valid vectors test") {
     INFO("Test file loaded.")
 
     TelemetryClass tm;
-    
+
     TM_state state;
     TM_transport * mockTransport = tm.get_transport();
     tm.sub(process, &state);
