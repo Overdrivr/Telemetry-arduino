@@ -1,5 +1,5 @@
 #include "Telemetry.h"
-#include "core/telemetry_core.h"
+#include "telemetry_core.h"
 #include "transport.h"
 
 TelemetryClass::TelemetryClass()
