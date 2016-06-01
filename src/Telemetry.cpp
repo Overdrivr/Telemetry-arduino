@@ -1,6 +1,6 @@
-#include "Telemetry.hpp"
-#include "core/telemetry_core.h"
-#include "transport.hpp"
+#include "Telemetry.h"
+#include "telemetry_core.h"
+#include "transport.h"
 
 TelemetryClass::TelemetryClass()
 {

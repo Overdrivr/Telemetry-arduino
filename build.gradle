@@ -20,12 +20,15 @@ task prepare(type: Copy) {
   dependsOn << cloneCoreRepo
   dependsOn << copyTestFile
   from './build/repo/src/telemetry/c', './build/repo/src/telemetry/headers/'
-  into './src/core/'
+  into './src/'
   include '**/**.c','**/**.h'
+  rename { String fileName ->
+    fileName.replace('.c', '.cpp')
+    }
 }
 
 task distribute(type: Zip){
-  dependsOn cloneCoreRepo
+  dependsOn << prepare
   from './src/'
   into './Telemetry/'
   archiveName 'dist/Telemetry-arduino.zip'
