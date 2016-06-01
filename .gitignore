@@ -100,3 +100,18 @@ gradle-app.setting
 dist/
 build/
 src/core/
+logs/
+
+# ==============
+# Core library files
+
+crc16.cpp
+crc16.h
+dictionnary.cpp
+dictionnary.h
+framing.h
+framing.cpp
+telemetry_core.h
+telemetry_core.cpp
+telemetry_utils.h
+telemetry_utils.cpp
