@@ -3,6 +3,10 @@
 
 #include "telemetry_utils.h"
 
+#define TELEMETRY_ARDUINO_MAJOR 0
+#define TELEMETRY_ARDUINO_MNIOR 1
+#define TELEMETRY_ARDUINO_PATCH 0
+
 class TelemetryClass
 {
     public:
