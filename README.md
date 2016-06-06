@@ -11,7 +11,7 @@ and act as a named communication channel.
 * Sending data from the Arduino is called *publishing*.
 
 ```cpp
-#include <Telemetry.hpp>
+#include <Telemetry.h>
 int32_t i;
 
 void setup() {
@@ -30,7 +30,7 @@ void loop() {
 When new data is received under the topic, the attached variable is updated.
 
 ```cpp
-#include <Telemetry.hpp>
+#include <Telemetry.h>
 float thr;
 
 void setup() {
