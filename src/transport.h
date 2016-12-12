@@ -2,6 +2,7 @@
 #define TELEMETRY_TRANSPORT_HPP_
 
 #include "HardwareSerial.h"
+#include "Arduino.h"
 
 int32_t read(uint8_t * buf, uint32_t sizeToRead)
 {
